@@ -15,14 +15,25 @@ package assignment5; // cannot be in default package
 import java.util.List;
 import java.util.Scanner;
 import java.io.*;
-
-
+import javafx.application.Application;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import javafx.stage.Screen;
+import javafx.stage.Stage;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 /*
  * Usage: java <pkgname>.Main <input file> test
  * input file is optional.  If input file is specified, the word 'test' is optional.
  * May not use 'test' argument without specifying input file.
  */
-public class Main {
+public class Main extends Application{
 
     static Scanner kb;	// scanner connected to keyboard input, or input file
     private static String inputFile;	// input file, used instead of keyboard input if specified
@@ -30,12 +41,115 @@ public class Main {
     private static String myPackage;	// package of Critter file.  Critter cannot be in default pkg.
     private static boolean DEBUG = false; // Use it or not, as you wish!
     static PrintStream old = System.out;	// if you want to restore output to console
+	static GridPane viewGrid = new GridPane();
+	static GridPane controllerGrid = new GridPane();
 
-
+	
     // Gets the package name.  The usage assumes that Critter and its subclasses are all in the same package.
     static {
         myPackage = Critter.class.getPackage().toString().split(" ")[1];
     }
+    
+	@Override
+	public void start(Stage primaryStage) {
+		try {			
+			
+			double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
+			double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
+			
+			viewGrid.setGridLinesVisible(true);
+			controllerGrid.setGridLinesVisible(false);
+			
+			Stage controllerStage = new Stage();
+			primaryStage.setTitle("View");
+			controllerStage.setTitle("Controller");
+
+			
+			Scene viewScene = new Scene(viewGrid, 500, 500);
+			Scene controllerScene = new Scene(controllerGrid, 500, 500);
+			
+			Button makeCritter = new Button();
+	        makeCritter.setText("Make Critter");
+			Button step = new Button();
+	        step.setText("Step");
+			Button quit = new Button();
+	        quit.setText("Quit");
+	        
+	        controllerGrid.setHgap(10);
+	        controllerGrid.setVgap(10);
+	        
+	        TextField critterAmountTF = new TextField("Enter Amount:");	        
+	        TextField stepAmountTF = new TextField("Enter Amount:");	        
+	        
+	        makeCritter.setMinSize(100, 10);
+	        step.setMinSize(100, 10);
+	        quit.setMinSize(100, 10);
+
+	        makeCritter.setOnAction(new EventHandler<ActionEvent>() {
+	            @Override
+	            public void handle(ActionEvent event) {
+	                System.out.println("Hello World1!");
+	            }
+	        });
+	        step.setOnAction(new EventHandler<ActionEvent>() {
+	            @Override
+	            public void handle(ActionEvent event) {
+	                System.out.println("Hello World2!");
+	            }
+	        });
+	        quit.setOnAction(new EventHandler<ActionEvent>() {
+	            @Override
+	            public void handle(ActionEvent event) {
+	               System.exit(0);
+	            }
+	        });
+	        
+	    	String makeCritterErrorString;
+	    	String stepErrorString;
+	        
+	        Label makeCritterErrorLabel = new Label("Error Message");
+	        Label stepErrorLabel = new Label("Error Message");
+	        makeCritterErrorLabel.setTextFill(Color.RED);
+	        stepErrorLabel.setTextFill(Color.RED);
+	        
+	        ComboBox<String> cb = new ComboBox<String>();	        
+	        cb.getItems().addAll(
+	        	     "hello",
+	        	     "friend");
+	        cb.getSelectionModel().selectFirst();
+
+	        
+	        controllerGrid.add(makeCritter, 0, 0);
+	        controllerGrid.add(makeCritterErrorLabel, 0, 1);
+	        controllerGrid.add(cb, 2, 0);
+	        controllerGrid.add(step, 0, 2);
+	        controllerGrid.add(stepErrorLabel, 0, 3);
+
+	        controllerGrid.add(quit, 0, 4);
+	        controllerGrid.add(critterAmountTF, 1, 0);
+	        controllerGrid.add(stepAmountTF, 1, 2);
+			
+	        
+	        
+			primaryStage.setScene(viewScene);
+			controllerStage.setScene(controllerScene);
+			
+			controllerStage.setX(0);
+			controllerStage.setY((screenHeight-500)/2);
+			
+			primaryStage.setX((screenWidth-500)/2);
+			primaryStage.setY((screenHeight-500)/2);
+						
+			primaryStage.show();
+			controllerStage.show();
+			
+			// Paints the icons.
+			Painter.paint();
+			
+		} catch(Exception e) {
+			e.printStackTrace();		
+		}
+	}
 
     /**
      * Main method.
@@ -43,6 +157,8 @@ public class Main {
      * and the second is test (for test output, where all output to be directed to a String), or nothing.
      */
     public static void main(String[] args) { 
+    	launch(args);
+    	System.exit(0);
         if (args.length != 0) {
             try {
                 inputFile = args[0];

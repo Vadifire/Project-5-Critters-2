@@ -102,4 +102,10 @@ public class Critter4 extends Critter {
 		else
 			System.out.println();
 	}
+
+	@Override
+	public CritterShape viewShape() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

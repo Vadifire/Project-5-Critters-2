@@ -59,5 +59,11 @@ public class Critter1 extends Critter{
 		System.out.println("There are currently "+critter1s.size()+" timid little scaredy cats!");
 	}
 
+	@Override
+	public CritterShape viewShape() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }
