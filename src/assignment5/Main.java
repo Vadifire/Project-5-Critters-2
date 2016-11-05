@@ -68,14 +68,13 @@ public class Main extends Application{
 	@Override
 	public void start(Stage primaryStage) {
 		try {			
-			
+	        ArrayList<CheckBox> checkboxes = new ArrayList<CheckBox>();
 			Critter.displayWorld();
 			
 			double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
 			double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
 			
 			viewGrid.setGridLinesVisible(false);
-			//controllerGrid.setGridLinesVisible(false);
 			
 			Stage controllerStage = new Stage();
 			primaryStage.setTitle("View");
@@ -136,22 +135,6 @@ public class Main extends Application{
 	        slider.setMaxWidth(350);
 	        Label animateLabel = new Label("You are set to step "+(int)slider.getValue()+" times per frame.");
 
-	        
-	        /*AnimationTimer animTimer = new AnimationTimer(){
-
-				@Override
-				public void handle(long now) {
-					if(animating){
-						if ((now - lastAnim) > 1000000000){
-							animate((int)slider.getValue());
-							lastAnim = now;
-						}
-					}
-				}
-	        	
-	        };
-	        animTimer.stop();*/
-	        
 	        ComboBox<String> cb = new ComboBox<String>();	
 	      
 	        
@@ -206,6 +189,7 @@ public class Main extends Application{
 						}
 	            	}
 	    			Critter.displayWorld();
+	    			updateStats(checkboxes,critterTypes);
 	            }
 	        });
 	        step.setOnAction(new EventHandler<ActionEvent>() {
@@ -235,7 +219,8 @@ public class Main extends Application{
 	            	for (int i = 0; i < stepCount; i++)
 	            		Critter.worldTimeStep();
 	    			Critter.displayWorld();
-	            }
+	    			updateStats(checkboxes,critterTypes);
+				}
 	        });
 	        seed.setOnAction(new EventHandler<ActionEvent>() {
 	            @Override
@@ -326,6 +311,7 @@ public class Main extends Application{
 									Critter.worldTimeStep();
 								}
 								Critter.displayWorld();
+				    			updateStats(checkboxes,critterTypes);
 							}
 						}
 					});
@@ -397,6 +383,8 @@ public class Main extends Application{
 	       statsGrid.setVgap(5);
 	        int row, col;
 	        row = col = 0;
+	        
+	        
 	        for (String s : critterTypes){
 	        	CheckBox checkbox = new CheckBox();
 	        	checkbox.setText(s);
@@ -407,6 +395,7 @@ public class Main extends Application{
 	        	}
 	        	else
 	        		col++;
+	        	checkboxes.add(checkbox);
 	        }
 	        
 	        controllerContainer.setPadding(new Insets(10,10,10,10));
@@ -430,8 +419,6 @@ public class Main extends Application{
 
 	        controllerContainer.getChildren().add(new Label("Run stats for critters:"));
 	        controllerContainer.getChildren().add(statsGrid);
-
-	        statsContainer.getChildren().add(new Label("Stats data"));
 			
 	        primaryStage.setResizable(false);
 	        controllerStage.setResizable(false);
@@ -457,6 +444,34 @@ public class Main extends Application{
 		} catch(Exception e) {
 			e.printStackTrace();		
 		}
+	}
+	
+	private static void updateStats(ArrayList<CheckBox> checkboxes, ArrayList<String> critterTypes){
+		statsContainer.getChildren().clear();
+	    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	    PrintStream ps = new PrintStream(baos);
+	    PrintStream old = System.out;
+	    System.setOut(ps);
+	    for (int i = 0; i < checkboxes.size(); i++){
+	    	CheckBox cb = checkboxes.get(i);
+			if (cb.isSelected()){
+				try {
+    				String myPackage = Critter.class.getPackage().toString().split(" ")[1];
+    				Class<?> c = Class.forName(myPackage+"."+critterTypes.get(i));
+    				Class<?>[] types = { List.class };
+    				c.getMethod("runStats", types).invoke(c, Critter.getInstances(critterTypes.get(i)));
+    				Label l = new Label(baos.toString());
+    				l.setWrapText(true);
+					statsContainer.getChildren().add(l);
+					baos.reset();
+				    System.out.flush();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		} 
+	    System.setOut(old);
 	}
 
     /**

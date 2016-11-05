@@ -58,6 +58,8 @@ public abstract class Critter {
 	
 	public abstract CritterShape viewShape(); 
 	
+	private static String[][] critterLocs = new String[Params.world_width][Params.world_height];
+	
 
 	protected String look(int direction, boolean steps) { //if steps is true, running 2
 		int originalX = x_coord;
@@ -66,12 +68,8 @@ public abstract class Critter {
 		move(direction);
 		if (steps)
 			move(direction);
-		
-		for (Critter c : population){
-			if ((c.x_coord == this.x_coord) && (c.y_coord == this.y_coord)){
-				look = c.toString();
-			}
-		}
+		energy-=Params.look_energy_cost;
+		look = critterLocs[x_coord][y_coord];
 		x_coord = originalX;
 		y_coord = originalY;
 		return look;
@@ -370,11 +368,33 @@ public abstract class Critter {
 	 */
 	public static void worldTimeStep() {
 
-		for (Critter c : population) { // Each critter does their time step
+		for (int i = 0; i < critterLocs.length; i ++){
+			for (int j = 0; j < critterLocs[0].length; j ++){
+				critterLocs[i][j] = null;
+			}
+		}
+		for (Critter c : population) {
+			critterLocs[c.x_coord][c.y_coord] = c.toString();
+		}
+		
+		Iterator<Critter> it = population.iterator();
+		while (it.hasNext()) { // cull the dead critters
+			Critter c = it.next();
 			c.hasMoved = false;
 			c.doTimeStep();
+			if (c.getEnergy() <= 0) {
+				critterLocs[c.x_coord][c.y_coord] = null;
+				it.remove();
+				for (Critter c2 : population) {
+					critterLocs[c2.x_coord][c2.y_coord] = c2.toString();
+				}
+			}
 		}
-
+		
+		for (Critter c : population) { 
+			critterLocs[c.x_coord][c.y_coord] = c.toString();
+		}
+		
 		for (Critter c : population) { // Add a conflict for each critter in the same location
 			for (Critter other : population) {
 				if (c != other && c.x_coord == other.x_coord && c.y_coord == other.y_coord) {
@@ -401,7 +421,7 @@ public abstract class Critter {
 		population.addAll(babies);
 		babies.clear();
 
-		Iterator<Critter> it = population.iterator();
+		it = population.iterator();
 		while (it.hasNext()) { // cull the dead critters
 			Critter c = it.next();
 			if (c.getEnergy() <= 0) {
