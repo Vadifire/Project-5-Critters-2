@@ -18,6 +18,11 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
+
 /* see the PDF for descriptions of the methods and fields in this class
  * you may add fields, methods or inner classes to Critter ONLY if you make your additions private
  * no new public, protected or default-package code or data can be added to Critter
@@ -411,36 +416,52 @@ public abstract class Critter {
 	 * only one arbitrary critter is shown.
 	 */
 	public static void displayWorld() {
-		char[][] critterChars = new char[Params.world_width][Params.world_height];
-
-		for (int i = 0; i < critterChars.length; i++) {
-			for (int j = 0; j < critterChars[0].length; j++) {
-				critterChars[i][j] = ' ';
+		
+		for (int i = 0; i < Params.world_width; i++){
+			for (int j = 0; j < Params.world_height; j++){
+				Rectangle r = new Rectangle(500/Params.world_width, 500/Params.world_height);
+				r.setFill(Color.GREY);
+				r.setStroke(Color.BLACK);
+				r.setStrokeWidth(1);
+				Main.viewGrid.add(r,i,j);
 			}
 		}
-		for (Critter c : population) {
-			critterChars[c.x_coord][c.y_coord] = c.toString().charAt(0);
-		}
+		
+		for (Critter c : population){
+			CritterShape cs = c.viewShape();
+			Shape s;
+			switch (cs){
+				case SQUARE:
+					s = new Rectangle(500/Params.world_width, 500/Params.world_height); 
+					break;
+					
+				case CIRCLE:
+					s = new Circle(Math.min(250/Params.world_width, 250/Params.world_height)); 
 
-		System.out.print("+");
-		for (int i = 0; i < Params.world_width; i++) {
-			System.out.print("-");
-		}
-		System.out.println("+");
+					break;
+				/*
+				case DIAMOND:
+					
+					break;
+					
+				case TRIANGLE:
+					
+					break;
+					
+				case STAR:
+					
+					break;
 
-		for (int i = 0; i < Params.world_height; i++) {
-			System.out.print("|");
-			for (int j = 0; j < Params.world_width; j++) {
-				System.out.print(critterChars[j][i]);
+				*/
+				default:
+					s = new Rectangle(500/Params.world_width-2, 500/Params.world_height-2); 
+					break;
 			}
-			System.out.println("|");
+			s.setFill(c.viewColor());
+			s.setStroke(c.viewOutlineColor());
+			Main.viewGrid.add(s,c.x_coord,c.y_coord);
 		}
 
-		System.out.print("+");
-		for (int i = 0; i < Params.world_width; i++) {
-			System.out.print("-");
-		}
-		System.out.println("+");
 
 	}
 

@@ -21,8 +21,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -54,17 +58,19 @@ public class Main extends Application{
 	public void start(Stage primaryStage) {
 		try {			
 			
+			Critter.displayWorld();
+			
 			double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
 			double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
 			
-			viewGrid.setGridLinesVisible(true);
+			viewGrid.setGridLinesVisible(false);
 			controllerGrid.setGridLinesVisible(false);
 			
 			Stage controllerStage = new Stage();
 			primaryStage.setTitle("View");
 			controllerStage.setTitle("Controller");
 
-			
+
 			Scene viewScene = new Scene(viewGrid, 500, 500);
 			Scene controllerScene = new Scene(controllerGrid, 500, 500);
 			
@@ -74,27 +80,128 @@ public class Main extends Application{
 	        step.setText("Step");
 			Button quit = new Button();
 	        quit.setText("Quit");
+			Button seed = new Button();
+	        seed.setText("Enter Seed");
 	        
 	        controllerGrid.setHgap(10);
 	        controllerGrid.setVgap(10);
 	        
 	        TextField critterAmountTF = new TextField("Enter Amount:");	        
-	        TextField stepAmountTF = new TextField("Enter Amount:");	        
+	        TextField stepAmountTF = new TextField("Enter Amount:");	
+            critterAmountTF.setStyle("-fx-text-fill: grey;");
+            stepAmountTF.setStyle("-fx-text-fill: grey;");
+	        TextField seedNumberTF = new TextField("Enter Seed:");	
+            seedNumberTF.setStyle("-fx-text-fill: grey;");
 	        
 	        makeCritter.setMinSize(100, 10);
 	        step.setMinSize(100, 10);
 	        quit.setMinSize(100, 10);
+	        seed.setMinSize(100, 10);
+
+	        
+	        Label makeCritterErrorLabel = new Label("");
+	        Label stepErrorLabel = new Label("");
+	        makeCritterErrorLabel.setTextFill(Color.RED);
+	        stepErrorLabel.setTextFill(Color.RED);
+	        Label seedErrorLabel = new Label("");
+	        seedErrorLabel.setTextFill(Color.RED);
+	        
+	        ComboBox<String> cb = new ComboBox<String>();	
+	      
+	        
+	        File folder = new File("./src/"+myPackage+"/");
+	        File[] listOfFiles = folder.listFiles();
+	        
+	        for(int i = 0; i < listOfFiles.length; i++){
+	        	String s = listOfFiles[i].getName().substring(0,listOfFiles[i].getName().length()-5);
+	        	try{
+	        	Class c = Class.forName(myPackage+"."+s);
+	        	if (Critter.class.isAssignableFrom(c) && !s.equals("Critter")){
+	        		cb.getItems().add(s);
+	        	}
+	        	
+	        	}catch (Exception e){}
+	        }
+	        cb.getSelectionModel().selectFirst();
 
 	        makeCritter.setOnAction(new EventHandler<ActionEvent>() {
 	            @Override
 	            public void handle(ActionEvent event) {
-	                System.out.println("Hello World1!");
+	            	int critterAmount = 0;
+	            	String critterClassName = cb.getValue();
+	            	try{
+	            		critterAmount = Integer.parseInt(critterAmountTF.getText());
+	            	}
+	            	catch (Exception e){
+	            		if (critterAmountTF.getText().equals("")){
+	            			critterAmount = 1;
+	            			makeCritterErrorLabel.setText("");
+	            		}
+	            	}
+	            	if (critterAmount <= 0){
+	            		makeCritterErrorLabel.setTextFill(Color.RED);
+	            		makeCritterErrorLabel.setText("Enter a positive integer.");
+	            	}
+	            	else{
+	            		if (critterAmount == 1)
+		            		makeCritterErrorLabel.setText("Made "+critterAmount+ " Critter.");
+	            		else
+		            		makeCritterErrorLabel.setText("Made "+critterAmount+ " Critters.");
+	            		makeCritterErrorLabel.setTextFill(Color.BLACK);
+	            	}
+	            	for (int i = 0; i < critterAmount; i++){
+						try {
+							Critter.makeCritter(critterClassName);
+						} catch (InvalidCritterException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+	            	}
+	    			Critter.displayWorld();
 	            }
 	        });
 	        step.setOnAction(new EventHandler<ActionEvent>() {
 	            @Override
 	            public void handle(ActionEvent event) {
-	                System.out.println("Hello World2!");
+	            	int stepCount = 0;
+	            	try{
+	            		stepCount = Integer.parseInt(stepAmountTF.getText());
+	            	}
+	            	catch (Exception e){
+	            		if (stepAmountTF.getText().equals("")){
+	            			stepCount = 1;
+	            			stepErrorLabel.setText("");
+	            		}
+	            	}
+	            	if (stepCount <= 0){
+	            		stepErrorLabel.setTextFill(Color.RED);
+	            		stepErrorLabel.setText("Enter a positive integer.");
+	            	}
+	            	else{
+	            		if (stepCount == 1)
+		            		stepErrorLabel.setText("Stepped "+stepCount+ " time.");
+	            		else
+	            			stepErrorLabel.setText("Stepped "+stepCount+ " times.");
+	            		stepErrorLabel.setTextFill(Color.BLACK);
+	            	}
+	            	for (int i = 0; i < stepCount; i++)
+	            		Critter.worldTimeStep();
+	    			Critter.displayWorld();
+	            }
+	        });
+	        seed.setOnAction(new EventHandler<ActionEvent>() {
+	            @Override
+	            public void handle(ActionEvent event) {
+	            	long seedNumber = 0;
+	            	try{
+	            		seedNumber = Long.parseLong(seedNumberTF.getText());
+		            	Critter.setSeed(seedNumber);
+		            	seedErrorLabel.setText("Seed set to "+seedNumber+".");
+		            	seedErrorLabel.setTextFill(Color.BLACK);
+	            	}
+	            	catch (Exception e){
+	            		seedErrorLabel.setText("Invalid seed entered.");
+	            	}
 	            }
 	        });
 	        quit.setOnAction(new EventHandler<ActionEvent>() {
@@ -104,32 +211,79 @@ public class Main extends Application{
 	            }
 	        });
 	        
-	    	String makeCritterErrorString;
-	    	String stepErrorString;
 	        
-	        Label makeCritterErrorLabel = new Label("Error Message");
-	        Label stepErrorLabel = new Label("Error Message");
-	        makeCritterErrorLabel.setTextFill(Color.RED);
-	        stepErrorLabel.setTextFill(Color.RED);
+	        critterAmountTF.setOnMousePressed(new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent event) {
+					if (critterAmountTF.getText().equals("Enter Amount:")){
+			            critterAmountTF.setStyle("-fx-text-fill: black;");
+						critterAmountTF.setText("");
+					}
+				}
+	        });
+	        stepAmountTF.setOnMousePressed(new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent event) {
+					if (stepAmountTF.getText().equals("Enter Amount:")){
+			            stepAmountTF.setStyle("-fx-text-fill: black;");
+						stepAmountTF.setText("");
+					}
+				}
+	        });
+	        	
+	        seedNumberTF.setOnMousePressed(new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent event) {
+					if (seedNumberTF.getText().equals("Enter Seed:")){
+						seedNumberTF.setStyle("-fx-text-fill: black;");
+						seedNumberTF.setText("");
+					}
+				}
+	        });
+	        	
 	        
-	        ComboBox<String> cb = new ComboBox<String>();	        
-	        cb.getItems().addAll(
-	        	     "hello",
-	        	     "friend");
-	        cb.getSelectionModel().selectFirst();
+	        Slider slider = new Slider();
+	        slider.setMin(0);
+	        slider.setMax(100);
+	        slider.setValue(40);
+	        slider.setShowTickLabels(true);
+	        slider.setShowTickMarks(true);
+	        slider.setMajorTickUnit(50);
+	        slider.setMinorTickCount(5);
+	        slider.setBlockIncrement(10);
+	        
 
+	        HBox box0 = new HBox(); //make Critter
+	        box0.getChildren().add(makeCritter);
+	        box0.getChildren().add(critterAmountTF);
+	        box0.getChildren().add(cb);
+	        box0.setSpacing(10);
+
+	        HBox box1 = new HBox(); //step
+	        box1.getChildren().add(step);
+	        box1.getChildren().add(stepAmountTF);
+	        box1.setSpacing(10);
 	        
-	        controllerGrid.add(makeCritter, 0, 0);
+	        HBox box2 = new HBox(); //step
+	        box2.getChildren().add(seed);
+	        box2.getChildren().add(seedNumberTF);
+	        box2.setSpacing(10);
+	        
+	        
+	        controllerGrid.add(box0, 0, 0); //make Critter
 	        controllerGrid.add(makeCritterErrorLabel, 0, 1);
-	        controllerGrid.add(cb, 2, 0);
-	        controllerGrid.add(step, 0, 2);
+	        
+	        controllerGrid.add(box1, 0, 2); //Step
 	        controllerGrid.add(stepErrorLabel, 0, 3);
 
-	        controllerGrid.add(quit, 0, 4);
-	        controllerGrid.add(critterAmountTF, 1, 0);
-	        controllerGrid.add(stepAmountTF, 1, 2);
-			
+	        controllerGrid.add(box2, 0, 4); //Seed
+	        controllerGrid.add(seedErrorLabel, 0, 5);
 	        
+	        controllerGrid.add(quit, 0, 6);
+	        controllerGrid.add(slider, 0, 7);
+			
+	        primaryStage.setResizable(false);
+	        controllerStage.setResizable(false);
 	        
 			primaryStage.setScene(viewScene);
 			controllerStage.setScene(controllerScene);
@@ -142,10 +296,7 @@ public class Main extends Application{
 						
 			primaryStage.show();
 			controllerStage.show();
-			
-			// Paints the icons.
-			Painter.paint();
-			
+						
 		} catch(Exception e) {
 			e.printStackTrace();		
 		}
