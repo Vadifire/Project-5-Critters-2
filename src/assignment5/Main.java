@@ -12,26 +12,35 @@
 
 package assignment5; // cannot be in default package
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+
+import java.util.Timer;
+import java.util.TimerTask;
+import javafx.geometry.Insets;
 import java.io.*;
+
 import javafx.application.Application;
-import javafx.geometry.Rectangle2D;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 /*
  * Usage: java <pkgname>.Main <input file> test
  * input file is optional.  If input file is specified, the word 'test' is optional.
@@ -46,7 +55,9 @@ public class Main extends Application{
     private static boolean DEBUG = false; // Use it or not, as you wish!
     static PrintStream old = System.out;	// if you want to restore output to console
 	static GridPane viewGrid = new GridPane();
-	static GridPane controllerGrid = new GridPane();
+	static VBox controllerContainer = new VBox();
+	static VBox statsContainer = new VBox();
+    static boolean animating = false;
 
 	
     // Gets the package name.  The usage assumes that Critter and its subclasses are all in the same package.
@@ -64,15 +75,17 @@ public class Main extends Application{
 			double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
 			
 			viewGrid.setGridLinesVisible(false);
-			controllerGrid.setGridLinesVisible(false);
+			//controllerGrid.setGridLinesVisible(false);
 			
 			Stage controllerStage = new Stage();
 			primaryStage.setTitle("View");
 			controllerStage.setTitle("Controller");
-
+			Stage statsStage = new Stage();
+			statsStage.setTitle("Stats");
 
 			Scene viewScene = new Scene(viewGrid, 500, 500);
-			Scene controllerScene = new Scene(controllerGrid, 500, 500);
+			Scene statsScene = new Scene(statsContainer, 375, 450);
+			Scene controllerScene = new Scene(controllerContainer, 375, 450);
 			
 			Button makeCritter = new Button();
 	        makeCritter.setText("Make Critter");
@@ -82,9 +95,14 @@ public class Main extends Application{
 	        quit.setText("Quit");
 			Button seed = new Button();
 	        seed.setText("Enter Seed");
+			Button startButton = new Button();
+	        startButton.setText("Start Animation");
+			Button stopButton = new Button();
+	        stopButton.setText("Stop Animation");
+	        stopButton.setDisable(true);
 	        
-	        controllerGrid.setHgap(10);
-	        controllerGrid.setVgap(10);
+	        controllerContainer.setSpacing(10);
+	        
 	        
 	        TextField critterAmountTF = new TextField("Enter Amount:");	        
 	        TextField stepAmountTF = new TextField("Enter Amount:");	
@@ -106,11 +124,41 @@ public class Main extends Application{
 	        Label seedErrorLabel = new Label("");
 	        seedErrorLabel.setTextFill(Color.RED);
 	        
+	        Slider slider = new Slider();
+	        slider.setMin(0);
+	        slider.setMax(100);
+	        slider.setValue(1);
+	        slider.setShowTickLabels(true);
+	        slider.setShowTickMarks(true);
+	        slider.setMajorTickUnit(10);
+	        slider.setMinorTickCount(1);
+	        slider.setBlockIncrement(1);
+	        slider.setMaxWidth(350);
+	        Label animateLabel = new Label("You are set to step "+(int)slider.getValue()+" times per frame.");
+
+	        
+	        /*AnimationTimer animTimer = new AnimationTimer(){
+
+				@Override
+				public void handle(long now) {
+					if(animating){
+						if ((now - lastAnim) > 1000000000){
+							animate((int)slider.getValue());
+							lastAnim = now;
+						}
+					}
+				}
+	        	
+	        };
+	        animTimer.stop();*/
+	        
 	        ComboBox<String> cb = new ComboBox<String>();	
 	      
 	        
 	        File folder = new File("./src/"+myPackage+"/");
 	        File[] listOfFiles = folder.listFiles();
+	        
+	        ArrayList<String> critterTypes = new ArrayList<String>();
 	        
 	        for(int i = 0; i < listOfFiles.length; i++){
 	        	String s = listOfFiles[i].getName().substring(0,listOfFiles[i].getName().length()-5);
@@ -118,6 +166,7 @@ public class Main extends Application{
 	        	Class c = Class.forName(myPackage+"."+s);
 	        	if (Critter.class.isAssignableFrom(c) && !s.equals("Critter")){
 	        		cb.getItems().add(s);
+	        		critterTypes.add(s);
 	        	}
 	        	
 	        	}catch (Exception e){}
@@ -153,7 +202,6 @@ public class Main extends Application{
 						try {
 							Critter.makeCritter(critterClassName);
 						} catch (InvalidCritterException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 	            	}
@@ -212,7 +260,7 @@ public class Main extends Application{
 	        });
 	        
 	        
-	        critterAmountTF.setOnMousePressed(new EventHandler<MouseEvent>() {
+	        critterAmountTF.setOnMouseClicked(new EventHandler<MouseEvent>() {
 				@Override
 				public void handle(MouseEvent event) {
 					if (critterAmountTF.getText().equals("Enter Amount:")){
@@ -221,7 +269,7 @@ public class Main extends Application{
 					}
 				}
 	        });
-	        stepAmountTF.setOnMousePressed(new EventHandler<MouseEvent>() {
+	        stepAmountTF.setOnMouseClicked(new EventHandler<MouseEvent>() {
 				@Override
 				public void handle(MouseEvent event) {
 					if (stepAmountTF.getText().equals("Enter Amount:")){
@@ -231,7 +279,7 @@ public class Main extends Application{
 				}
 	        });
 	        	
-	        seedNumberTF.setOnMousePressed(new EventHandler<MouseEvent>() {
+	        seedNumberTF.setOnMouseClicked(new EventHandler<MouseEvent>() {
 				@Override
 				public void handle(MouseEvent event) {
 					if (seedNumberTF.getText().equals("Enter Seed:")){
@@ -240,18 +288,88 @@ public class Main extends Application{
 					}
 				}
 	        });
+	        
+	  
+	        slider.setOnMouseDragged(new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent event) {
+					animateLabel.setText("You are set to step "+(int)slider.getValue()+" times per frame.");
+				}
+	        });
+	        slider.setOnMousePressed(new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent event) {
+					animateLabel.setText("You are set to step "+(int)slider.getValue()+" times per frame.");
+				}
+	        });
+	        slider.setOnKeyPressed(new EventHandler<KeyEvent>() {
+				@Override
+				public void handle(KeyEvent event) {
+					int animateAmount = (int)slider.getValue();
+					if (event.getCode() == KeyCode.LEFT)
+						animateLabel.setText("You are set to step "+Math.max((animateAmount-1),0)+" times per frame.");
+					if (event.getCode() == KeyCode.RIGHT){
+						animateLabel.setText("You are set to step "+Math.min((animateAmount+1),100)+" times per frame.");
+					}
+				}
+	        });
+	        
+			Timer timer = new Timer();
+			TimerTask task = new TimerTask(){
+				@Override
+				public void run() {
+					Platform.runLater(new Runnable(){
+						@Override
+						public void run(){
+							if (animating){
+								for (int i = 0 ; i < (int)slider.getValue(); i++){
+									Critter.worldTimeStep();
+								}
+								Critter.displayWorld();
+							}
+						}
+					});
+				}
+			};
+			timer.scheduleAtFixedRate(task, 1000, 1000);
+				        	        
+	        startButton.setOnMouseClicked(new EventHandler<MouseEvent>(){
+				@Override
+				public void handle(MouseEvent event) {
+					makeCritter.setDisable(true);
+					critterAmountTF.setDisable(true);
+					cb.setDisable(true);
+					step.setDisable(true);
+					stepAmountTF.setDisable(true);
+					seed.setDisable(true);
+					seedNumberTF.setDisable(true);
+					startButton.setDisable(true);
+					stopButton.setDisable(false);
+					slider.setDisable(true);
+					animating = true;
+				}
 	        	
+	        });
 	        
-	        Slider slider = new Slider();
-	        slider.setMin(0);
-	        slider.setMax(100);
-	        slider.setValue(40);
-	        slider.setShowTickLabels(true);
-	        slider.setShowTickMarks(true);
-	        slider.setMajorTickUnit(50);
-	        slider.setMinorTickCount(5);
-	        slider.setBlockIncrement(10);
-	        
+
+	        stopButton.setOnMouseClicked(new EventHandler<MouseEvent>(){
+
+				@Override
+				public void handle(MouseEvent event) {
+					makeCritter.setDisable(false);
+					critterAmountTF.setDisable(false);
+					cb.setDisable(false);
+					step.setDisable(false);
+					stepAmountTF.setDisable(false);
+					seed.setDisable(false);
+					seedNumberTF.setDisable(false);
+					stopButton.setDisable(true);
+					startButton.setDisable(false);
+					slider.setDisable(false);
+					animating = false;
+				}
+	        	
+	        });
 
 	        HBox box0 = new HBox(); //make Critter
 	        box0.getChildren().add(makeCritter);
@@ -269,33 +387,72 @@ public class Main extends Application{
 	        box2.getChildren().add(seedNumberTF);
 	        box2.setSpacing(10);
 	        
+	        HBox box3 = new HBox(); //step
+	        box3.getChildren().add(startButton);
+	        box3.getChildren().add(stopButton);
+	        box3.setSpacing(10);
 	        
-	        controllerGrid.add(box0, 0, 0); //make Critter
-	        controllerGrid.add(makeCritterErrorLabel, 0, 1);
+	        GridPane statsGrid = new GridPane();
+	       statsGrid.setHgap(10);
+	       statsGrid.setVgap(5);
+	        int row, col;
+	        row = col = 0;
+	        for (String s : critterTypes){
+	        	CheckBox checkbox = new CheckBox();
+	        	checkbox.setText(s);
+	        	statsGrid.add(checkbox,col,row);
+	        	if (col == 4){
+	        		col = 0;
+	        		row++;
+	        	}
+	        	else
+	        		col++;
+	        }
 	        
-	        controllerGrid.add(box1, 0, 2); //Step
-	        controllerGrid.add(stepErrorLabel, 0, 3);
+	        controllerContainer.setPadding(new Insets(10,10,10,10));
+	        	        
+	        controllerContainer.getChildren().add(box0); //make Critter
+	        controllerContainer.getChildren().add(makeCritterErrorLabel);
+	        
+	        controllerContainer.getChildren().add(box1); //Step
+	        controllerContainer.getChildren().add(stepErrorLabel);
 
-	        controllerGrid.add(box2, 0, 4); //Seed
-	        controllerGrid.add(seedErrorLabel, 0, 5);
+	        controllerContainer.getChildren().add(box2); //Seed
+	        controllerContainer.getChildren().add(seedErrorLabel);
 	        
-	        controllerGrid.add(quit, 0, 6);
-	        controllerGrid.add(slider, 0, 7);
+	        controllerContainer.getChildren().add(quit);
+	        controllerContainer.getChildren().add(new HBox());
+	        controllerContainer.getChildren().add(animateLabel);
+	        controllerContainer.getChildren().add(slider);  
+	        
+	        controllerContainer.getChildren().add(box3); //animation
+	        controllerContainer.getChildren().add(new HBox());
+
+	        controllerContainer.getChildren().add(new Label("Run stats for critters:"));
+	        controllerContainer.getChildren().add(statsGrid);
+
+	        statsContainer.getChildren().add(new Label("Stats data"));
 			
 	        primaryStage.setResizable(false);
 	        controllerStage.setResizable(false);
-	        
+	        statsStage.setResizable(false);
+
 			primaryStage.setScene(viewScene);
+			statsStage.setScene(statsScene);
 			controllerStage.setScene(controllerScene);
 			
 			controllerStage.setX(0);
-			controllerStage.setY((screenHeight-500)/2);
+			controllerStage.setY((screenHeight-450)/2);
 			
 			primaryStage.setX((screenWidth-500)/2);
 			primaryStage.setY((screenHeight-500)/2);
+			
+			statsStage.setX(screenWidth-400);
+			statsStage.setY((screenHeight-450)/2);
 						
 			primaryStage.show();
 			controllerStage.show();
+			statsStage.show();
 						
 		} catch(Exception e) {
 			e.printStackTrace();		
