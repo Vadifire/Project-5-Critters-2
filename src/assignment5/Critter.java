@@ -416,6 +416,7 @@ public abstract class Critter {
 	 * only one arbitrary critter is shown.
 	 */
 	public static void displayWorld() {
+		Main.viewGrid.getChildren().clear();
 		
 		for (int i = 0; i < Params.world_width; i++){
 			for (int j = 0; j < Params.world_height; j++){
