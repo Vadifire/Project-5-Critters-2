@@ -133,7 +133,7 @@ public class Main extends Application{
 	        slider.setMinorTickCount(1);
 	        slider.setBlockIncrement(1);
 	        slider.setMaxWidth(350);
-	        Label animateLabel = new Label("You are set to step "+(int)slider.getValue()+" times per frame.");
+	        Label animateLabel = new Label("You are set to step "+(int)slider.getValue()+" time"+((int)slider.getValue() == 1 ? "" : "s")+" per frame.");
 
 	        ComboBox<String> cb = new ComboBox<String>();	
 	      
@@ -165,7 +165,8 @@ public class Main extends Application{
 	            		critterAmount = Integer.parseInt(critterAmountTF.getText());
 	            	}
 	            	catch (Exception e){
-	            		if (critterAmountTF.getText().equals("")){
+	            		if (critterAmountTF.getText().equals("") || critterAmountTF.getText().equals("Enter Amount:")){
+	            			critterAmountTF.setText("");
 	            			critterAmount = 1;
 	            			makeCritterErrorLabel.setText("");
 	            		}
@@ -176,9 +177,9 @@ public class Main extends Application{
 	            	}
 	            	else{
 	            		if (critterAmount == 1)
-		            		makeCritterErrorLabel.setText("Made "+critterAmount+ " Critter.");
+		            		makeCritterErrorLabel.setText("Made "+critterAmount+" "+critterClassName+".");
 	            		else
-		            		makeCritterErrorLabel.setText("Made "+critterAmount+ " Critters.");
+		            		makeCritterErrorLabel.setText("Made "+critterAmount+" "+critterClassName+"s.");
 	            		makeCritterErrorLabel.setTextFill(Color.BLACK);
 	            	}
 	            	for (int i = 0; i < critterAmount; i++){
@@ -200,8 +201,9 @@ public class Main extends Application{
 	            		stepCount = Integer.parseInt(stepAmountTF.getText());
 	            	}
 	            	catch (Exception e){
-	            		if (stepAmountTF.getText().equals("")){
+	            		if (stepAmountTF.getText().equals("") || stepAmountTF.getText().equals("Enter Amount:")){
 	            			stepCount = 1;
+	            			stepAmountTF.setText("");
 	            			stepErrorLabel.setText("");
 	            		}
 	            	}
@@ -278,13 +280,13 @@ public class Main extends Application{
 	        slider.setOnMouseDragged(new EventHandler<MouseEvent>() {
 				@Override
 				public void handle(MouseEvent event) {
-					animateLabel.setText("You are set to step "+(int)slider.getValue()+" times per frame.");
+					animateLabel.setText("You are set to step "+(int)slider.getValue()+" time"+((int)slider.getValue() == 1 ? "" : "s")+" per frame.");
 				}
 	        });
 	        slider.setOnMousePressed(new EventHandler<MouseEvent>() {
 				@Override
 				public void handle(MouseEvent event) {
-					animateLabel.setText("You are set to step "+(int)slider.getValue()+" times per frame.");
+					animateLabel.setText("You are set to step "+(int)slider.getValue()+" time"+((int)slider.getValue() == 1 ? "" : "s")+" per frame.");
 				}
 	        });
 	        slider.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -292,9 +294,9 @@ public class Main extends Application{
 				public void handle(KeyEvent event) {
 					int animateAmount = (int)slider.getValue();
 					if (event.getCode() == KeyCode.LEFT)
-						animateLabel.setText("You are set to step "+Math.max((animateAmount-1),0)+" times per frame.");
+						animateLabel.setText("You are set to step "+Math.max((animateAmount-1),0)+" time"+(Math.max((animateAmount-1),0) == 1 ? "" : "s")+" per frame.");
 					if (event.getCode() == KeyCode.RIGHT){
-						animateLabel.setText("You are set to step "+Math.min((animateAmount+1),100)+" times per frame.");
+						animateLabel.setText("You are set to step "+Math.min((animateAmount+1),100)+" time"+(Math.min((animateAmount+1),100) == 1 ? "" : "s")+" per frame.");
 					}
 				}
 	        });
