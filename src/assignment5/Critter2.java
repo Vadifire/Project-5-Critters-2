@@ -80,8 +80,19 @@ public class Critter2 extends Critter{
 					return true;
 				}
 				else{
-					run(Critter.getRandomInt(8)); //Feel weak, take our chances running.
-					return false;
+					for (int dir = 0; dir <8; dir++){ //Analyzes a spot to run or walk to
+						String encounter = look(dir, false);
+						if (encounter == null){
+							walk(dir);
+							return false;
+						}
+						encounter = look(dir, true);
+						if (encounter == null){
+							run(dir);
+							return false;
+						}
+					}
+					return true; //No where to run, fight.
 				}
 			}
 		}
@@ -107,8 +118,7 @@ public class Critter2 extends Critter{
 
 	@Override
 	public CritterShape viewShape() {
-		// TODO Auto-generated method stub
-		return null;
+		return CritterShape.STAR;
 	}
 
 

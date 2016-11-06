@@ -36,7 +36,11 @@ public class Critter1 extends Critter{
 		}
 		
 		if (getEnergy() <= Params.start_energy/5){ //Forced to take risk and search for food
-			walk(Critter.getRandomInt(8)); //Frantically walks around.
+			int direction = Critter.getRandomInt(8); // Looks to walk in random direction
+			String encounter = look(direction,false);
+			if (encounter == null || encounter.equals ("@")){
+				walk(direction); //Walk only if no threat is detected.
+			}
 		}
 	}
 
