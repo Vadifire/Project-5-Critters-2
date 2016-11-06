@@ -12,6 +12,9 @@
 
 package assignment5;
 
+import assignment5.Critter.CritterShape;
+import javafx.scene.paint.Color;
+
 /*
  * Critter2 has a genetic preference on how strong it feels it needs to be to fight, 
  * and how often it decides to move. As Critter2 reproduces, natural selection
@@ -120,6 +123,10 @@ public class Critter2 extends Critter{
 	public CritterShape viewShape() {
 		return CritterShape.STAR;
 	}
-
+	
+	@Override
+	public Color viewFillColor(){
+		return Color.GAINSBORO;
+	}
 
 }

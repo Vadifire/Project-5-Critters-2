@@ -11,6 +11,8 @@
  */
 package assignment5;
 
+import javafx.scene.paint.Color;
+
 public class Critter4 extends Critter {
 
 	/*
@@ -78,7 +80,9 @@ public class Critter4 extends Critter {
 		if ((sustainedInjury && (recoveryPhase == 0) && !opponent.equals("4")) || opponent.equals("@")){
 			return true;
 		}else{
-			this.run(Critter.getRandomInt(7));
+			int runDir = Critter.getRandomInt(7);
+			if(look(runDir, true).equals("4")) runDir = Critter.getRandomInt(7);
+			this.run(runDir);
 			return false;
 		}
 	}
@@ -105,7 +109,16 @@ public class Critter4 extends Critter {
 
 	@Override
 	public CritterShape viewShape() {
-		// TODO Auto-generated method stub
-		return null;
+		return CritterShape.DIAMOND;
+	}
+	
+	@Override
+	public Color viewFillColor(){
+		return Color.AQUAMARINE;
+	}
+	
+	@Override
+	public Color viewOutlineColor(){
+		return Color.MEDIUMPURPLE;
 	}
 }

@@ -12,6 +12,8 @@
 
 package assignment5;
 
+import javafx.scene.paint.Color;
+
 /*
  * Critter1 is scaredy cat. It always tries to run away from fights with non-Algae critters.
  * Scaredy cat has to make sure its able to run from foes, so it prefers to sit still, waiting for Algae to spawn.
@@ -64,8 +66,13 @@ public class Critter1 extends Critter{
 	}
 
 	@Override
+	public Color viewFillColor(){
+		return Color.GHOSTWHITE;
+	}
+	
+	@Override
 	public CritterShape viewShape() {
-		return null;
+		return CritterShape.TRIANGLE;
 	}
 
 
