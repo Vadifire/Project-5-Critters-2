@@ -20,6 +20,7 @@ import java.util.List;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 
@@ -460,20 +461,46 @@ public abstract class Critter {
 					s = new Circle(Math.min(250/Params.world_width, 250/Params.world_height)); 
 
 					break;
-				/*
+				
 				case DIAMOND:
-					
+					s = new Polygon();
+					((Polygon)s).getPoints().addAll(new Double[]{
+							1.0, (double) (250/Params.world_height),
+							(double) (250/Params.world_width), 1.0,
+							(double) (500/Params.world_width)-1, (double) (250/Params.world_height),
+							(double) (250/Params.world_width), (double)(500/Params.world_height)-1
+					});
 					break;
 					
 				case TRIANGLE:
-					
+					s = new Polygon();
+					((Polygon)s).getPoints().addAll(new Double[]{
+						2.0, (double) (500/Params.world_height) - 2,
+						(double) (250/Params.world_width), 2.0,
+						(double) (500/Params.world_width)-2, (double) (500/Params.world_height)-2
+					});
 					break;
 					
 				case STAR:
-					
+					s = new Polygon();
+					((Polygon)s).getPoints().addAll(new Double[]{
+						2.0, (double) (3*(500/Params.world_height)/4),
+						(double) ((500/Params.world_width)/2), 0.0,
+						(double) (500/Params.world_width)-2, (double) (3*(500/Params.world_height)/4)
+					});
+					s.setFill(c.viewColor());
+					s.setStroke(c.viewOutlineColor());
+					Main.viewGrid.add(s,c.x_coord,c.y_coord);
+					s = new Polygon();
+					((Polygon)s).getPoints().addAll(new Double[]{
+						2.0, (double)((500/Params.world_height)/4),
+						(double) (500/Params.world_width)-2, (double)((500/Params.world_height)/4),
+						(double) ((500/Params.world_width)/2), (double) (500/Params.world_height),
+						
+					});
 					break;
 
-				*/
+				
 				default:
 					s = new Rectangle(500/Params.world_width-2, 500/Params.world_height-2); 
 					break;
