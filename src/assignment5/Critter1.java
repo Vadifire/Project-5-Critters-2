@@ -67,7 +67,7 @@ public class Critter1 extends Critter{
 
 	@Override
 	public Color viewFillColor(){
-		return Color.GHOSTWHITE;
+		return Color.BLUE;
 	}
 	
 	@Override

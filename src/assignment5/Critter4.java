@@ -81,7 +81,9 @@ public class Critter4 extends Critter {
 			return true;
 		}else{
 			int runDir = Critter.getRandomInt(7);
-			if(look(runDir, true).equals("4")) runDir = Critter.getRandomInt(7);
+			String lookDir = look(runDir , true);
+			
+			if(lookDir != null && lookDir.equals("4")) runDir = Critter.getRandomInt(7);
 			this.run(runDir);
 			return false;
 		}

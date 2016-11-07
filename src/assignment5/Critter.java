@@ -484,19 +484,17 @@ public abstract class Critter {
 				case STAR:
 					s = new Polygon();
 					((Polygon)s).getPoints().addAll(new Double[]{
-						2.0, (double) (3*(500/Params.world_height)/4),
-						(double) ((500/Params.world_width)/2), 0.0,
-						(double) (500/Params.world_width)-2, (double) (3*(500/Params.world_height)/4)
-					});
-					s.setFill(c.viewColor());
-					s.setStroke(c.viewOutlineColor());
-					Main.viewGrid.add(s,c.x_coord,c.y_coord);
-					s = new Polygon();
-					((Polygon)s).getPoints().addAll(new Double[]{
-						2.0, (double)((500/Params.world_height)/4),
-						(double) (500/Params.world_width)-2, (double)((500/Params.world_height)/4),
-						(double) ((500/Params.world_width)/2), (double) (500/Params.world_height),
-						
+							2.0, (double) (2*(500/Params.world_height)/5),
+							(double)2*(500/Params.world_width)/5, (double) (2*(500/Params.world_height)/5),
+							(double)(Params.world_width/2), 2.0,
+							(double)3*(500/Params.world_width)/5, (double) (2*(500/Params.world_height)/5),
+							(double) (500/Params.world_width)-2, (double) (2*(500/Params.world_height)/5),
+							(double)3*(500/Params.world_width)/5, (double) (3*(500/Params.world_height)/5),
+							(double)4*(500/Params.world_width)/5, (double) ((500/Params.world_height))-2,
+							(double)(500/(Params.world_width)/2), (double) (4*(500/Params.world_height)/5),
+							(double)(500/Params.world_width)/5, (double) ((500/Params.world_height)-2),
+							(double)2*(500/Params.world_width)/5, (double) (3*(500/Params.world_height)/5)
+
 					});
 					break;
 
@@ -505,7 +503,7 @@ public abstract class Critter {
 					s = new Rectangle(500/Params.world_width-2, 500/Params.world_height-2); 
 					break;
 			}
-			s.setFill(c.viewColor());
+			s.setFill(c.viewFillColor());
 			s.setStroke(c.viewOutlineColor());
 			Main.viewGrid.add(s,c.x_coord,c.y_coord);
 		}

@@ -37,7 +37,8 @@ public class Critter3 extends Critter {
 		int direction = 2;
 		int sideStep = (Critter.getRandomInt(1) == 0) ? -1 : 1;
 		sideStep = (Critter.getRandomInt(1) == 0) ? sideStep : 0;
-		if (look(direction + sideStep, false).equals(this.toString())) {
+		String lookDir = look(direction + sideStep, false);
+		if (lookDir != null && lookDir.equals(this.toString())) {
 			this.walk(direction - sideStep);
 		} else {
 			this.walk(direction + sideStep);
