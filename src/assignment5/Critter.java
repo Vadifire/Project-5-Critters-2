@@ -439,8 +439,8 @@ public abstract class Critter {
 	public static void displayWorld() {
 		Main.viewPane.getChildren().clear();
 		
-		int xBoxSize = 500/Params.world_width;
-		int yBoxSize = 500/Params.world_height;
+		int xBoxSize = Main.viewWidth/Params.world_width;
+		int yBoxSize = Main.viewHeight/Params.world_height;
 		
 		for (int i = 0; i < Params.world_width; i++){
 			for (int j = 0; j < Params.world_height; j++){
@@ -456,68 +456,68 @@ public abstract class Critter {
 		for (Critter c : population){
 			CritterShape cs = c.viewShape();
 			Shape s;
-			int xDiff, yDiff;
+			int xDiff, yDiff, size;
 			switch (cs){
 				case SQUARE:
-					s = new Rectangle(Math.min(500/Params.world_width, 500/Params.world_height),
-							Math.min(500/Params.world_width, 500/Params.world_height)); 
-					xDiff = (Params.world_width < Params.world_height) ? (250/Params.world_width) : 0;
-					yDiff = (Params.world_height < Params.world_width) ? (250/Params.world_height) : 0;
-					s.relocate(xBoxSize*c.x_coord + xDiff/2, yBoxSize*c.y_coord +yDiff/2);
+					size = Math.min(xBoxSize-1, yBoxSize-1);
+					s = new Rectangle(size,size);
+					xDiff = (Params.world_width < Params.world_height) ? (xBoxSize-size)/2 : 0;
+					yDiff = (Params.world_height < Params.world_width) ? (yBoxSize-size)/2 : 0;
+					s.relocate(xBoxSize*c.x_coord + xDiff+1, yBoxSize*c.y_coord +yDiff+1);
 
 					break;
 					
 				case CIRCLE:
-					s = new Circle(Math.min(250/Params.world_width, 250/Params.world_height)); 
-					xDiff = (Params.world_width < Params.world_height) ? (250/Params.world_width) : 0;
-					yDiff = (Params.world_height < Params.world_width) ? (250/Params.world_height) : 0;
-
-					s.relocate(xBoxSize*c.x_coord + xDiff/2, yBoxSize*c.y_coord +yDiff/2);
+					size = Math.min(xBoxSize/2-1, yBoxSize/2-1);
+					s = new Circle(size); 
+					xDiff = (Params.world_width < Params.world_height) ? ((xBoxSize/2)-size) : 0;
+					yDiff = (Params.world_height < Params.world_width) ? ((yBoxSize/2)-size) : 0;
+					s.relocate(xBoxSize*c.x_coord + xDiff+2, yBoxSize*c.y_coord +yDiff+2);
 					break;
 				
 				case DIAMOND:
 					s = new Polygon();
 					((Polygon)s).getPoints().addAll(new Double[]{
-							1.0, (double) (250/Params.world_height),
-							(double) (250/Params.world_width), 1.0,
-							(double) (500/Params.world_width)-1, (double) (250/Params.world_height),
-							(double) (250/Params.world_width), (double)(500/Params.world_height)-1
+							1.0, (double) (yBoxSize/2),
+							(double) (xBoxSize/2), 1.0,
+							(double) (xBoxSize)-1, (double) (yBoxSize/2),
+							(double) (xBoxSize/2), (double)(yBoxSize)-1
 					});
-					s.relocate(xBoxSize*c.x_coord, yBoxSize*c.y_coord);
+					s.relocate(xBoxSize*c.x_coord+2, yBoxSize*c.y_coord+2);
 					break;
 					
 				case TRIANGLE:
 					s = new Polygon();
 					((Polygon)s).getPoints().addAll(new Double[]{
-						2.0, (double) (500/Params.world_height) - 2,
-						(double) (250/Params.world_width), 2.0,
-						(double) (500/Params.world_width)-2, (double) (500/Params.world_height)-2
+						2.0, (double) (yBoxSize) - 2,
+						(double) (xBoxSize/2), 2.0,
+						(double) (xBoxSize)-2, (double) (yBoxSize)-2
 					});
-					s.relocate(xBoxSize*c.x_coord, yBoxSize*c.y_coord);
+					s.relocate(xBoxSize*c.x_coord+2, yBoxSize*c.y_coord+2);
 					break;
 					
 				case STAR:
 					s = new Polygon();
 					((Polygon)s).getPoints().addAll(new Double[]{
-							2.0, (double) (2*(500/Params.world_height)/5),
-							(double)2*(500/Params.world_width)/5, (double) (2*(500/Params.world_height)/5),
-							(double)(500/Params.world_width/2), 2.0,
-							(double)3*(500/Params.world_width)/5, (double) (2*(500/Params.world_height)/5),
-							(double) (500/Params.world_width)-2, (double) (2*(500/Params.world_height)/5),
-							(double)3*(500/Params.world_width)/5, (double) (3*(500/Params.world_height)/5),
-							(double)4*(500/Params.world_width)/5, (double) ((500/Params.world_height))-2,
-							(double)(500/(Params.world_width)/2), (double) (4*(500/Params.world_height)/5),
-							(double)(500/Params.world_width)/5, (double) ((500/Params.world_height)-2),
-							(double)2*(500/Params.world_width)/5, (double) (3*(500/Params.world_height)/5)
+							2.0, (double) (2*(yBoxSize)/5),
+							(double)2*(xBoxSize)/5, (double) (2*(yBoxSize)/5),
+							(double)(xBoxSize/2), 2.0,
+							(double)3*(xBoxSize)/5, (double) (2*(yBoxSize)/5),
+							(double) (xBoxSize)-2, (double) (2*(yBoxSize)/5),
+							(double)3*(xBoxSize)/5, (double) (3*(yBoxSize)/5),
+							(double)4*(xBoxSize)/5, (double) ((yBoxSize))-2,
+							(double)(xBoxSize/2), (double) (4*(yBoxSize)/5),
+							(double)(xBoxSize)/5, (double) ((yBoxSize)-2),
+							(double)2*(xBoxSize)/5, (double) (3*(yBoxSize)/5)
 
 					});
-					s.relocate(xBoxSize*c.x_coord, yBoxSize*c.y_coord);
+					s.relocate(xBoxSize*c.x_coord+2, yBoxSize*c.y_coord+2);
 					break;
 
 				
 				default:
-					s = new Rectangle(500/Params.world_width-2, 500/Params.world_height-2); 
-					s.relocate(xBoxSize*c.x_coord, yBoxSize*c.y_coord);
+					s = new Rectangle(xBoxSize-2, yBoxSize-2); 
+					s.relocate(xBoxSize*c.x_coord+2, yBoxSize*c.y_coord+2);
 					break;
 			}
 			s.setFill(c.viewFillColor());

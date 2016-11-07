@@ -19,6 +19,8 @@ import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+
 import java.io.*;
 
 import javafx.application.Application;
@@ -62,6 +64,8 @@ public class Main extends Application {
 	static PrintStream old = System.out; // if you want to restore output to
 											// console
 	static Pane viewPane = new Pane();
+	public static int viewHeight;
+	public static int viewWidth;
 	static VBox controllerContainer = new VBox();
 	static VBox statsContainer = new VBox();
 	static boolean animating = false;
@@ -75,12 +79,17 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			// Initializes the blank world
-			Critter.displayWorld();
-
 			// Storing the height and width of the screen for location
 			final double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
 			final double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
+			
+			viewWidth = (int)screenWidth-640; //Optimize view width/height based on user's screen size
+			viewHeight = (int)screenHeight-40;
+			viewWidth=viewHeight = Math.min(viewWidth, viewHeight);
+			
+			// Initializes the blank world
+			Critter.displayWorld();
+			
 
 			/*
 			 * ArrayList containing the checkboxes for runStats Variable length
@@ -446,10 +455,10 @@ public class Main extends Application {
 			bp.setLeft(controllerContainer);
 			bp.setCenter(viewPane);
 			bp.setRight(statsContainer);
-			viewPane.setMinHeight(500);
-			viewPane.setMinWidth(500);
+			viewPane.setMinHeight(viewHeight);
+			viewPane.setMinWidth(viewWidth);
 
-			Scene s = new Scene(bp, 1100, 515);
+			Scene s = new Scene(bp, viewWidth+600, viewHeight);
 			primaryStage.setScene(s);
 			primaryStage.setX(10);
 			primaryStage.setY(10);
