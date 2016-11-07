@@ -33,6 +33,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
@@ -54,11 +55,11 @@ public class Main extends Application{
     private static String myPackage;	// package of Critter file.  Critter cannot be in default pkg.
     private static boolean DEBUG = false; // Use it or not, as you wish!
     static PrintStream old = System.out;	// if you want to restore output to console
-	static GridPane viewGrid = new GridPane();
+	static Pane canvas = new Pane();
 	static VBox controllerContainer = new VBox();
 	static VBox statsContainer = new VBox();
     static boolean animating = false;
-
+    
 	
     // Gets the package name.  The usage assumes that Critter and its subclasses are all in the same package.
     static {
@@ -73,16 +74,14 @@ public class Main extends Application{
 			
 			double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
 			double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
-			
-			viewGrid.setGridLinesVisible(false);
-			
+						
 			Stage controllerStage = new Stage();
 			primaryStage.setTitle("View");
 			controllerStage.setTitle("Controller");
 			Stage statsStage = new Stage();
 			statsStage.setTitle("Stats");
 
-			Scene viewScene = new Scene(viewGrid, 500, 500);
+			Scene viewScene = new Scene(canvas, 500, 500);
 			Scene statsScene = new Scene(statsContainer, 375, 450);
 			Scene controllerScene = new Scene(controllerContainer, 375, 450);
 			
@@ -394,9 +393,18 @@ public class Main extends Application{
 	        	if (col == 4){
 	        		col = 0;
 	        		row++;
+	        		
 	        	}
 	        	else
 	        		col++;
+		        checkbox.setOnMouseClicked(new EventHandler<MouseEvent>(){
+					@Override
+					public void handle(MouseEvent event) {
+						updateStats(checkboxes, critterTypes);
+					}
+		        	
+		        });
+	     
 	        	checkboxes.add(checkbox);
 	        }
 	        
@@ -430,13 +438,13 @@ public class Main extends Application{
 			statsStage.setScene(statsScene);
 			controllerStage.setScene(controllerScene);
 			
-			controllerStage.setX(0);
+			controllerStage.setX((screenWidth-500)/2-395);
 			controllerStage.setY((screenHeight-450)/2);
 			
 			primaryStage.setX((screenWidth-500)/2);
 			primaryStage.setY((screenHeight-500)/2);
 			
-			statsStage.setX(screenWidth-400);
+			statsStage.setX((screenWidth-500)/2+520);
 			statsStage.setY((screenHeight-450)/2);
 						
 			primaryStage.show();
@@ -468,7 +476,6 @@ public class Main extends Application{
 					baos.reset();
 				    System.out.flush();
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}

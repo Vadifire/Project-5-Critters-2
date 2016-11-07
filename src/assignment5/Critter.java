@@ -437,15 +437,19 @@ public abstract class Critter {
 	 * only one arbitrary critter is shown.
 	 */
 	public static void displayWorld() {
-		Main.viewGrid.getChildren().clear();
+		Main.canvas.getChildren().clear();
+		
+		int xBoxSize = 500/Params.world_width;
+		int yBoxSize = 500/Params.world_height;
 		
 		for (int i = 0; i < Params.world_width; i++){
 			for (int j = 0; j < Params.world_height; j++){
-				Rectangle r = new Rectangle(500/Params.world_width, 500/Params.world_height);
+				Rectangle r = new Rectangle(xBoxSize, yBoxSize);
 				r.setFill(Color.GREY);
 				r.setStroke(Color.BLACK);
 				r.setStrokeWidth(1);
-				Main.viewGrid.add(r,i,j);
+				r.relocate(xBoxSize*i, yBoxSize*j);
+				Main.canvas.getChildren().add(r);
 			}
 		}
 		
@@ -486,7 +490,7 @@ public abstract class Critter {
 					((Polygon)s).getPoints().addAll(new Double[]{
 							2.0, (double) (2*(500/Params.world_height)/5),
 							(double)2*(500/Params.world_width)/5, (double) (2*(500/Params.world_height)/5),
-							(double)(Params.world_width/2), 2.0,
+							(double)(500/Params.world_width/2), 2.0,
 							(double)3*(500/Params.world_width)/5, (double) (2*(500/Params.world_height)/5),
 							(double) (500/Params.world_width)-2, (double) (2*(500/Params.world_height)/5),
 							(double)3*(500/Params.world_width)/5, (double) (3*(500/Params.world_height)/5),
@@ -505,7 +509,8 @@ public abstract class Critter {
 			}
 			s.setFill(c.viewFillColor());
 			s.setStroke(c.viewOutlineColor());
-			Main.viewGrid.add(s,c.x_coord,c.y_coord);
+			s.relocate(xBoxSize*c.x_coord, yBoxSize*c.y_coord);
+			Main.canvas.getChildren().add(s);
 		}
 
 
