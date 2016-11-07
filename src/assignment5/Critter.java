@@ -437,7 +437,7 @@ public abstract class Critter {
 	 * only one arbitrary critter is shown.
 	 */
 	public static void displayWorld() {
-		Main.canvas.getChildren().clear();
+		Main.viewPane.getChildren().clear();
 		
 		int xBoxSize = 500/Params.world_width;
 		int yBoxSize = 500/Params.world_height;
@@ -449,21 +449,30 @@ public abstract class Critter {
 				r.setStroke(Color.BLACK);
 				r.setStrokeWidth(1);
 				r.relocate(xBoxSize*i, yBoxSize*j);
-				Main.canvas.getChildren().add(r);
+				Main.viewPane.getChildren().add(r);
 			}
 		}
 		
 		for (Critter c : population){
 			CritterShape cs = c.viewShape();
 			Shape s;
+			int xDiff, yDiff;
 			switch (cs){
 				case SQUARE:
-					s = new Rectangle(500/Params.world_width, 500/Params.world_height); 
+					s = new Rectangle(Math.min(500/Params.world_width, 500/Params.world_height),
+							Math.min(500/Params.world_width, 500/Params.world_height)); 
+					xDiff = (Params.world_width < Params.world_height) ? (250/Params.world_width) : 0;
+					yDiff = (Params.world_height < Params.world_width) ? (250/Params.world_height) : 0;
+					s.relocate(xBoxSize*c.x_coord + xDiff/2, yBoxSize*c.y_coord +yDiff/2);
+
 					break;
 					
 				case CIRCLE:
 					s = new Circle(Math.min(250/Params.world_width, 250/Params.world_height)); 
+					xDiff = (Params.world_width < Params.world_height) ? (250/Params.world_width) : 0;
+					yDiff = (Params.world_height < Params.world_width) ? (250/Params.world_height) : 0;
 
+					s.relocate(xBoxSize*c.x_coord + xDiff/2, yBoxSize*c.y_coord +yDiff/2);
 					break;
 				
 				case DIAMOND:
@@ -474,6 +483,7 @@ public abstract class Critter {
 							(double) (500/Params.world_width)-1, (double) (250/Params.world_height),
 							(double) (250/Params.world_width), (double)(500/Params.world_height)-1
 					});
+					s.relocate(xBoxSize*c.x_coord, yBoxSize*c.y_coord);
 					break;
 					
 				case TRIANGLE:
@@ -483,6 +493,7 @@ public abstract class Critter {
 						(double) (250/Params.world_width), 2.0,
 						(double) (500/Params.world_width)-2, (double) (500/Params.world_height)-2
 					});
+					s.relocate(xBoxSize*c.x_coord, yBoxSize*c.y_coord);
 					break;
 					
 				case STAR:
@@ -500,17 +511,18 @@ public abstract class Critter {
 							(double)2*(500/Params.world_width)/5, (double) (3*(500/Params.world_height)/5)
 
 					});
+					s.relocate(xBoxSize*c.x_coord, yBoxSize*c.y_coord);
 					break;
 
 				
 				default:
 					s = new Rectangle(500/Params.world_width-2, 500/Params.world_height-2); 
+					s.relocate(xBoxSize*c.x_coord, yBoxSize*c.y_coord);
 					break;
 			}
 			s.setFill(c.viewFillColor());
 			s.setStroke(c.viewOutlineColor());
-			s.relocate(xBoxSize*c.x_coord, yBoxSize*c.y_coord);
-			Main.canvas.getChildren().add(s);
+			Main.viewPane.getChildren().add(s);
 		}
 
 
@@ -592,10 +604,12 @@ public abstract class Critter {
 			int roll2 = m2Fight ? Critter.getRandomInt(m2.energy+1) : 0;
 			if (roll1 > roll2) {
 				m1.energy += m2.energy / 2;
+				critterLocs[m1.x_coord][m1.y_coord] = m1.toString();
 				m2.energy = 0;
 			}
 			else{
 				m2.energy += m1.energy / 2;
+				critterLocs[m2.x_coord][m2.y_coord] = m2.toString();
 				m1.energy = 0;
 			}
 		}
