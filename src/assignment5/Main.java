@@ -96,8 +96,8 @@ public class Main extends Application {
 			 * container necessary because we don't know how many subclasses of
 			 * Critter there are
 			 */
-			ArrayList<String> critterTypes = new ArrayList<String>();
-			ArrayList<CheckBox> checkboxes = new ArrayList<CheckBox>();
+			final ArrayList<String> critterTypes = new ArrayList<String>();
+			final ArrayList<CheckBox> checkboxes = new ArrayList<CheckBox>();
 			File folder = new File("./src/" + myPackage + "/");
 			File[] listOfFiles = folder.listFiles();
 
@@ -107,50 +107,50 @@ public class Main extends Application {
 
 			primaryStage.setTitle("Critters");
 
-			Button makeCritterButton = new Button();
+			final Button makeCritterButton = new Button();
 			makeCritterButton.setText("Make Critter");
 			makeCritterButton.setMinSize(100, 10);
 
-			Button stepButton = new Button();
+			final Button stepButton = new Button();
 			stepButton.setText("Step");
 			stepButton.setMinSize(100, 10);
 
-			Button quitButton = new Button();
+			final Button quitButton = new Button();
 			quitButton.setText("Quit");
 			quitButton.setMinSize(100, 10);
 
-			Button seedButton = new Button();
+			final Button seedButton = new Button();
 			seedButton.setText("Enter Seed");
 			seedButton.setMinSize(100, 10);
 
-			Button startButton = new Button();
+			final Button startButton = new Button();
 			startButton.setText("Start Animation");
 			startButton.setMinSize(100, 10);
 
-			Button stopButton = new Button();
+			final Button stopButton = new Button();
 			stopButton.setText("Stop Animation");
 			stopButton.setDisable(true);
 			stopButton.setMinSize(100, 10);
 
-			TextField critterAmountField = new TextField("Enter Amount:");
+			final TextField critterAmountField = new TextField("Enter Amount:");
 			critterAmountField.setStyle("-fx-text-fill: grey;");
 
-			TextField stepAmountField = new TextField("Enter Amount:");
+			final TextField stepAmountField = new TextField("Enter Amount:");
 			stepAmountField.setStyle("-fx-text-fill: grey;");
 
-			TextField seedNumberField = new TextField("Enter Seed:");
+			final TextField seedNumberField = new TextField("Enter Seed:");
 			seedNumberField.setStyle("-fx-text-fill: grey;");
 
-			Label makeCritterStatusLabel = new Label("");
+			final Label makeCritterStatusLabel = new Label("");
 			makeCritterStatusLabel.setTextFill(Color.RED);
 
-			Label stepStatusLabel = new Label("");
+			final Label stepStatusLabel = new Label("");
 			stepStatusLabel.setTextFill(Color.RED);
 
-			Label seedStatusLabel = new Label("");
+			final Label seedStatusLabel = new Label("");
 			seedStatusLabel.setTextFill(Color.RED);
 
-			Slider animSpeedSlider = new Slider();
+			final Slider animSpeedSlider = new Slider();
 			animSpeedSlider.setMin(0);
 			animSpeedSlider.setMax(100);
 			animSpeedSlider.setValue(1);
@@ -161,10 +161,10 @@ public class Main extends Application {
 			animSpeedSlider.setBlockIncrement(1);
 			animSpeedSlider.setMaxWidth(350);
 
-			Label animateLabel = new Label("You are set to step " + (int) animSpeedSlider.getValue() + " time"
+			final Label animateLabel = new Label("You are set to step " + (int) animSpeedSlider.getValue() + " time"
 					+ ((int) animSpeedSlider.getValue() == 1 ? "" : "s") + " per frame.");
 
-			ComboBox<String> critterTypComboBox = new ComboBox<String>();
+			final ComboBox<String> critterTypComboBox = new ComboBox<String>();
 
 			for (int i = 0; i < listOfFiles.length; i++) {
 				String s = listOfFiles[i].getName().substring(0, listOfFiles[i].getName().length() - 5);
