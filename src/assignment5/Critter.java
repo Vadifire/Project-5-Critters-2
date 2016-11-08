@@ -62,7 +62,14 @@ public abstract class Critter {
 	private static String[][] critterLocs = new String[Params.world_width][Params.world_height];
 	
 
-	protected String look(int direction, boolean steps) { //if steps is true, running 2
+	/**
+	 * Look method.
+	 * 
+	 * @param direction - direction to move in
+	 * @param steps - if false, critter is walking. If true, critter is running.
+	 * @return The toString of critter found, null if none.
+	 */
+	protected String look(int direction, boolean steps) { 
 		int originalX = x_coord;
 		int originalY = y_coord;
 		String look = null;
@@ -445,7 +452,7 @@ public abstract class Critter {
 		for (int i = 0; i < Params.world_width; i++){
 			for (int j = 0; j < Params.world_height; j++){
 				Rectangle r = new Rectangle(xBoxSize, yBoxSize);
-				r.setFill(Color.GREY);
+				r.setFill(Color.WHITE);
 				r.setStroke(Color.BLACK);
 				r.setStrokeWidth(1);
 				r.relocate(xBoxSize*i, yBoxSize*j);
