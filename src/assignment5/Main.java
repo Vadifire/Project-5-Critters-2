@@ -1,5 +1,5 @@
 /* CRITTERS Main.java
- * EE422C Project 4 submission by
+ * EE422C Project 5 submission by
  * <Ahsan Khan>
  * <ajk2723>
  * <16445>
@@ -278,6 +278,7 @@ public class Main extends Application {
 						seedStatusLabel.setText("Seed set to " + seedNumber + ".");
 						seedStatusLabel.setTextFill(Color.BLACK);
 					} catch (Exception e) {
+						seedStatusLabel.setTextFill(Color.RED);
 						seedStatusLabel.setText("Invalid seed entered.");
 					}
 				}
@@ -406,36 +407,28 @@ public class Main extends Application {
 			};
 			timer.scheduleAtFixedRate(task, 1000, 1000);
 
-			HBox box0 = new HBox(); // make Critter
+			controllerContainer.setPadding(new Insets(10, 10, 10, 10));
+			controllerContainer.setSpacing(10);
+
+			HBox box0 = new HBox(); // Hbox for make Critter controls
 			box0.getChildren().add(makeCritterButton);
 			box0.getChildren().add(critterAmountField);
 			box0.getChildren().add(critterTypComboBox);
 			box0.setSpacing(10);
+			controllerContainer.getChildren().add(box0);
+			controllerContainer.getChildren().add(makeCritterStatusLabel);
 
-			HBox box1 = new HBox(); // step
+			HBox box1 = new HBox(); // Hbox for step controls
 			box1.getChildren().add(stepButton);
 			box1.getChildren().add(stepAmountField);
 			box1.setSpacing(10);
-
-			HBox box2 = new HBox(); // step
-			box2.getChildren().add(seedButton);
-			box2.getChildren().add(seedNumberField);
-			box2.setSpacing(10);
-
-			HBox box3 = new HBox(); // step
-			box3.getChildren().add(startButton);
-			box3.getChildren().add(stopButton);
-			box3.setSpacing(10);
-
-			controllerContainer.setPadding(new Insets(10, 10, 10, 10));
-			controllerContainer.setSpacing(10);
-
-			controllerContainer.getChildren().add(box0); // make Critter
-			controllerContainer.getChildren().add(makeCritterStatusLabel);
-
 			controllerContainer.getChildren().add(box1); // Step
 			controllerContainer.getChildren().add(stepStatusLabel);
 
+			HBox box2 = new HBox(); // Hbox for seed controls
+			box2.getChildren().add(seedButton);
+			box2.getChildren().add(seedNumberField);
+			box2.setSpacing(10);
 			controllerContainer.getChildren().add(box2); // Seed
 			controllerContainer.getChildren().add(seedStatusLabel);
 
@@ -444,6 +437,10 @@ public class Main extends Application {
 			controllerContainer.getChildren().add(animateLabel);
 			controllerContainer.getChildren().add(animSpeedSlider);
 
+			HBox box3 = new HBox(); // Hbox for animation controls
+			box3.getChildren().add(startButton);
+			box3.getChildren().add(stopButton);
+			box3.setSpacing(10);
 			controllerContainer.getChildren().add(box3); // animation
 			controllerContainer.getChildren().add(new HBox());
 

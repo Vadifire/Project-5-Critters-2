@@ -1,5 +1,5 @@
 /* CRITTERS Critter3.java
- * EE422C Project 4 submission by
+ * EE422C Project 5 submission by
  * <Ahsan Khan>
  * <ajk2723>
  * <16445>
